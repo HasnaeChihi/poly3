@@ -70,10 +70,11 @@
                   <label>Famille:</label>
                   
                   <select  name="famille" class="form-control" placeholder="Tapez la famille">
-                      <option value="">opt1</option>
-                      <option value="">opt2</option>
-                      <option value="">opt3</option>
-                      <option value="">opt4</option>
+                     @foreach($famillies as $famille)
+                         <option value="{{$famille->id}}">{{$famille->nom}}</option>
+                     @endforeach
+                      
+
                   </select>       
                   <span class="form-text text-muted">Choisissez la famille</span>
                </div>
@@ -99,10 +100,9 @@
                <div class="col-lg-6">
                   <label>Designation:</label>
                   <select  name="designation" class="form-control" placeholder="Choisissez la famille" required>
-                      <option value="">opt1</option>
-                      <option value="">opt2</option>
-                      <option value="">opt3</option>
-                      <option value="">opt4</option>
+                     @foreach($designations as $designation)
+                         <option value="{{$designation->id}}">{{$designation->nom}}</option>
+                     @endforeach
                   </select>       
                   <span class="form-text text-muted">Choisisseez la designation</span>
                </div>
@@ -115,13 +115,13 @@
             <div class="form-group row">
                <div class="col-lg-6">
                   <label>Nombre du MDC:</label>
-                  <input type="radio" name="nbr_mdc"  /> LHD
-                  <input type="radio" name="nbr_mdc"  /> RHD
+                  <input type="radio" name="nbr_mdc" value="1"  /> LHD
+                  <input type="radio" name="nbr_mdc" value="2" /> RHD
                </div>
                <div class="col-lg-6">
                   <label>Type du MDC:</label>
-                  <input type="radio" name="type_mdc"  /> Grand(G)
-                  <input type="radio" name="type_mdc"  /> Moyen(M)
+                  <input type="radio" name="type_mdc" value="1" /> Grand(G)
+                  <input type="radio" name="type_mdc" value="2" /> Moyen(M)
                </div>
             </div>
             <div class="row">
@@ -132,14 +132,14 @@
             <div class="form-group row">
                <div class="col-lg-6">
                   <label>Reference point systems (RPS) :</label>
-                  <input type="radio" name="system_iso_statisme_rps"  /> G
-                  <input type="radio" name="system_iso_statisme_rps"  /> M
+                  <input type="radio" name="system_iso_statisme_rps"  value="1"/> G
+                  <input type="radio" name="system_iso_statisme_rps" value="2" /> M
                   <input type="text" name="rps_qte" class="form-control" placeholder="Quantité"/>
                </div>
                <div class="col-lg-6">
                   <label>Supports RPS :</label>
-                  <input type="radio" name="system_iso_statisme_support_rps	"  /> G
-                  <input type="radio" name="system_iso_statisme_support_rps	"  /> M
+                  <input type="radio" name="system_iso_statisme_support_rps	"value="1"  /> G
+                  <input type="radio" name="system_iso_statisme_support_rps	" value="2" /> M
                   <input type="text" name="system_iso_statisme_support_rps_qte" class="form-control" placeholder="Quantité"/>
                </div>
             </div>
@@ -246,19 +246,19 @@
             </div>
             <div class="form-group row">
                <div class="col-lg-2">
-                  <input type="radio" name="cout_mdc_nom"  /> MDC Wire
+                  <input type="radio" name="cout_mdc_nom" value="3" /> MDC Wire
                </div>
                <div class="col-lg-2">
-                  <input type="radio" name="cout_mdc_nom"  /> Simple
+                  <input type="radio" name="cout_mdc_nom" value="4" /> Simple
                </div>
                <div class="col-lg-2">
-                  <input type="radio" name="cout_mdc_nom"  /> Moyen
+                  <input type="radio" name="cout_mdc_nom" value="5" /> Moyen
                </div>
                <div class="col-lg-2">
-                  <input type="radio" name="cout_mdc_nom"  /> Difficile
+                  <input type="radio" name="cout_mdc_nom"  value="6"/> Difficile
                </div>
                <div class="col-lg-2">
-                     <input type="radio" name="cout_mdc_nom"  /> Proposer un cout
+                     <input type="radio" name="cout_mdc_nom"  value="7"/> Proposer un cout
                 </div>
                 
             </div>
@@ -268,12 +268,14 @@
                </div>
             </div>
            
-
+<!--
                <div class="row">
                   <div class="col-md-12 text-center">
                      <h4 class="text-center">Cout standard du MDC</h4>
                   </div>
                </div>
+
+-->
       </form>
       </div>
       <div class="modal-footer">
@@ -356,46 +358,12 @@ var DatatablesDataSourceAjaxServer = {
                 url: "{{ route('prixmdc.show') }}",
                 method: 'POST',
                 data: function(d) {
-                    d.startdate = myData.startdate;
-                    d.enddate = myData.enddate;
-                    d.bk=$('#bank_filter').val()
                 },
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             },
-            footerCallback: function ( row, data, start, end, display ) {
-            var api = this.api(), data;
-            // Remove the formatting to get integer data for summation
-            var intVal = function ( i ) {
-                return typeof i === 'string' ?
-                    i.replace(/[\$,]/g, '')*1 :
-                    typeof i === 'number' ?
-                        i : 0;
-            };
-
-            // Total over all pages
-            total = api
-                .column( 4 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
-
-            // Total over this page
-            pageTotal = api
-                .column( 4, { page: 'current'} )
-                .data()
-                .reduce( function (a, b) {
-
-                    return intVal(a) + intVal(b);
-                }, 0 );
-
-            // Update footer
-            $( api.column( 4 ).footer() ).html(
-                 formatMoney(total)
-            );
-        },
+        
             columns: [{
                     targets: 0,
 
@@ -435,7 +403,7 @@ var DatatablesDataSourceAjaxServer = {
                     class: "text-center",
                     sortable: !0,
                     render: function(a, b, c, d) {
-                            return c.nomfamille
+                            return c.famille
                     }
                 },
 
@@ -458,7 +426,7 @@ var DatatablesDataSourceAjaxServer = {
                     width: 90,
                     sortable: !0,
                     render: function(a, b, c, d) {
-                        return c.nomdesignation
+                        return c.nomdesigniation
 
                     }
                 }, {
@@ -505,7 +473,7 @@ var DatatablesDataSourceAjaxServer = {
                     width: 90,
                     sortable: !0,
                     render: function(a, b, c, d) {
-                        return c.prixtotal
+                        return parseInt(c.prixtotal)+parseInt(c.prixtotal1)+parseInt(c.prixtotal2)+parseInt(c.prixtotal3)+parseInt(c.prixtotal4)+parseInt(c.prixtotal5)
 
                     }
                 },

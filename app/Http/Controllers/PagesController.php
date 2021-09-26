@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PagesController extends Controller
 {
@@ -18,8 +19,9 @@ class PagesController extends Controller
         $page_description = 'Some description for the page';
 
         if (Auth::user()->roles->first()->role!="admin") {
-            return abort(403);
+            return abort(403);}
         return view('pages.dashboard', compact('page_title', 'page_description'));
+    
     }
 
     /**
@@ -116,7 +118,8 @@ class PagesController extends Controller
         return view('pages.icons.svg', compact('page_title', 'page_description'));
     }
 
-    public function getform(){
+    public function getform()
+    {
         return view('pages.form');
     }
 
